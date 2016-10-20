@@ -1,17 +1,407 @@
 
 RCS file: RCS/imapsync,v
 Working file: imapsync
-head: 1.644
+head: 1.727
 branch:
 locks: strict
-	gilles: 1.644
+	gilles: 1.727
 access list:
 symbolic names:
 keyword substitution: kv
-total revisions: 644;	selected revisions: 644
+total revisions: 727;	selected revisions: 727
 description:
 ----------------------------
-revision 1.644	locked by: gilles;
+revision 1.727	locked by: gilles;
+date: 2016/08/19 10:30:36;  author: gilles;  state: Exp;  lines: +53 -110
+Bugfix. Fall back separator to / even when host has no mailbox at all.
+Usability. Better warning about default ssl SSL_VERIFY_NONE
+----------------------------
+revision 1.726
+date: 2016/08/16 21:32:35;  author: gilles;  state: Exp;  lines: +19 -19
+Changed "Checking --regexflag --skipmess --regexmess --maxlinelengthcmd --pipemess commands" with a space string instead of an empty one. Because pipemess() now fails when output is empty.
+----------------------------
+revision 1.725
+date: 2016/08/16 00:01:48;  author: gilles;  state: Exp;  lines: +122 -83
+Some perl critics.
+----------------------------
+revision 1.724
+date: 2016/08/13 11:04:06;  author: gilles;  state: Exp;  lines: +362 -150
+Refactor. No more global $pidfile, $pidfilelocking, $nb_errors, $errorsdump, @errors_log. 
+Refactor. Changed exit_clean. From exit_clean( 0 ) to  exit_clean( $sync, $EX_OK ) ;
+Refactor. Changed errors_incr. From errors_incr( $error ) to errors_incr( $sync, $error ).
+Refactor. From stats(  ) to stats( $sync ).
+Added constants:
+ * $EXIT_WITH_ERRORS_MAX
+ * $EXIT_BY_SIGNAL
+ * $EXIT_WITH_ERRORS
+ * $EXIT_PID_FILE_ALREADY_EXIST
+ * $INTERVAL_TO_EXIT
+----------------------------
+revision 1.723
+date: 2016/07/29 21:57:03;  author: gilles;  state: Exp;  lines: +12 -11
+Force Unconnected state with Ctrl-c.
+----------------------------
+revision 1.722
+date: 2016/07/29 21:14:11;  author: gilles;  state: Exp;  lines: +20 -12
+Added sub debugsleep()
+Changed --debugsleep to take a float parameter. --debugsleep 4.5 add a sleep of 4.5 seconds every folder and before every copied message.
+----------------------------
+revision 1.721
+date: 2016/07/29 17:25:00;  author: gilles;  state: Exp;  lines: +57 -29
+Do reconnections when hit by a signal Ctrl-c, aka INT signal.
+2 consecutive Ctrl-c within 1 second then exit the program.
+----------------------------
+revision 1.720
+date: 2016/07/29 15:01:38;  author: gilles;  state: Exp;  lines: +324 -225
+Some Perl critics "not one of the allowed literal values". Now still 188 violations of ValuesAndExpressions::ProhibitMagicNumbers.
+----------------------------
+revision 1.719
+date: 2016/07/25 19:27:47;  author: gilles;  state: Exp;  lines: +229 -152
+Change some print to myprint.
+Fixed some perlcritic level 4 & 5
+sub pipemess now abort on empty message generated.
+sub pipemess prints stderr
+----------------------------
+revision 1.718
+date: 2016/07/20 10:45:51;  author: gilles;  state: Exp;  lines: +21 -13
+Added --inet4 to force AF_INET connextion in ssl mode.
+Added --inet6 too to force AF_INET6 in ssl mode. Might be useless.
+----------------------------
+revision 1.717
+date: 2016/07/13 14:05:20;  author: gilles;  state: Exp;  lines: +130 -57
+Started tests_message_for_host2()
+Added cyrillic for hard part --automap
+--pipemess test with pipe (cat|cat)
+--pipemess tests with arrors
+----------------------------
+revision 1.716
+date: 2016/07/12 09:02:25;  author: gilles;  state: Exp;  lines: +209 -81
+Added full mocked tests to sub tests_delete1emptyfolders(). Test::MockObject is really helpful!
+Changed pipemess() to return both message and stderr output, in list context. Scalar context stays the same, for now.
+Added list context tests to tests_pipemess()
+----------------------------
+revision 1.715
+date: 2016/07/05 21:17:48;  author: gilles;  state: Exp;  lines: +10 -10
+Removed from errors list "ignoring folder because it is not in host1 whole folders list". Too hard too.
+----------------------------
+revision 1.714
+date: 2016/07/05 21:12:23;  author: gilles;  state: Exp;  lines: +10 -10
+Remove "not selectable" folders from the errors list. Too hard.
+----------------------------
+revision 1.713
+date: 2016/07/05 12:50:35;  author: gilles;  state: Exp;  lines: +21 -18
+Added "ignoring folder" in the errors list.
+----------------------------
+revision 1.712
+date: 2016/06/30 01:35:02;  author: gilles;  state: Exp;  lines: +202 -21
+Added option --delete1emptyfolders ; 8 hours to write it.
+Added module dependency Test::MockObject for some tests. Only require for now.
+----------------------------
+revision 1.711
+date: 2016/06/22 20:23:33;  author: gilles;  state: Exp;  lines: +10 -10
+Removed a useless debug output
+----------------------------
+revision 1.710
+date: 2016/06/22 14:47:23;  author: gilles;  state: Exp;  lines: +28 -27
+Perlcritic fixes. ValuesAndExpressions::ProhibitMagicNumbers some 3 and is_a_release_number tests.
+----------------------------
+revision 1.709
+date: 2016/06/22 11:32:40;  author: gilles;  state: Exp;  lines: +58 -37
+Perlcritic fixes. ValuesAndExpressions::ProhibitMagicNumbers -1 => $LAST or $MINUS_ONE.
+----------------------------
+revision 1.708
+date: 2016/06/22 10:32:45;  author: gilles;  state: Exp;  lines: +193 -192
+Perlcritic fixes. ProhibitParensWithBuiltins, Last ones.
+----------------------------
+revision 1.707
+date: 2016/06/18 00:37:24;  author: gilles;  state: Exp;  lines: +64 -81
+Perlcritic fixes. ProhibitParensWithBuiltins, exists() => exists. But not all. Need to examine precedence with not or and etc.
+Uncommented call to $test_builder->reset(  ) Don't know why it was commented but it was bad for knowing tests go wrong.
+----------------------------
+revision 1.706
+date: 2016/06/17 13:34:09;  author: gilles;  state: Exp;  lines: +13 -13
+Sugar. "return (" => "return("
+----------------------------
+revision 1.705
+date: 2016/06/17 13:28:23;  author: gilles;  state: Exp;  lines: +422 -422
+Replaced all print( calls by myprint( calls.
+It prepares better output handling, I hope.
+----------------------------
+revision 1.704
+date: 2016/06/17 13:25:16;  author: gilles;  state: Exp;  lines: +36 -36
+Replaced smyprintf by mysprintf
+----------------------------
+revision 1.703
+date: 2016/06/17 13:12:09;  author: gilles;  state: Exp;  lines: +700 -697
+Perlcritic fixes. Rmoved parentheses, ProhibitParensWithBuiltins, for defined|scalar|push|keys|unshift|uc
+but added parentheses to print.
+Replaced printf by myprintf
+Replaced sprinf by smyprintf.
+----------------------------
+revision 1.702
+date: 2016/06/15 22:43:35;  author: gilles;  state: Exp;  lines: +495 -495
+Fixed perl critic 458 violations of ValuesAndExpressions::ProhibitInterpolationOfLiterals. "Useless interpolation of literal string". 2 left but critic bugs on them. "\1foo" is not '\1foo' but critic suggests equality.
+----------------------------
+revision 1.701
+date: 2016/06/12 23:39:04;  author: gilles;  state: Exp;  lines: +812 -812
+Fixed perlcritic "Don't use whitespace at the end of lines". Was 627 violations of CodeLayout::ProhibitTrailingWhitespace. Now 0. For now...
+----------------------------
+revision 1.700
+date: 2016/06/12 20:55:25;  author: gilles;  state: Exp;  lines: +33 -33
+Fixed perlcritic latest ouble-sigil dereference $$foo => ${ $ffo } and $#$foo => $#{ $foo }
+----------------------------
+revision 1.699
+date: 2016/06/12 19:51:52;  author: gilles;  state: Exp;  lines: +29 -29
+Fixed perlcritic Double-sigil dereference @$foo => @{ $foo }
+----------------------------
+revision 1.698
+date: 2016/06/12 19:39:15;  author: gilles;  state: Exp;  lines: +33 -36
+Fixed perlcritic %$foo => %{ $ff }
+Double-sigil dereference
+----------------------------
+revision 1.697
+date: 2016/06/12 18:42:18;  author: gilles;  state: Exp;  lines: +53 -24
+Perl critic fixes. 10 x "Unnamed numeric literals make code less maintainable.". use Readonly to fix them.
+----------------------------
+revision 1.696
+date: 2016/06/09 23:42:34;  author: gilles;  state: Exp;  lines: +201 -201
+Fixed perlcritic 'Quotes used with a string containing no non-whitespace characters'.
+"" or '' => q{}
+" " or ' ' => q{ }
+----------------------------
+revision 1.695
+date: 2016/06/09 18:17:14;  author: gilles;  state: Exp;  lines: +15 -10
+Check connected state in sub create_folder().
+----------------------------
+revision 1.694
+date: 2016/06/08 21:01:15;  author: gilles;  state: Exp;  lines: +43 -17
+Added patch: [imapsync/imapsync] Update XOAUTH2 support to work with Google's newer .json files (#68).
+----------------------------
+revision 1.693
+date: 2016/06/07 21:13:03;  author: gilles;  state: Exp;  lines: +38 -28
+CGI loaded when needed only.
+In CGI mode, Remove all content in unsafe evalued options.
+In CGI mode, help solving permission issues.
+----------------------------
+revision 1.692
+date: 2016/05/25 16:34:15;  author: gilles;  state: Exp;  lines: +11 -11
+Small typo
+----------------------------
+revision 1.691
+date: 2016/05/24 20:56:34;  author: gilles;  state: Exp;  lines: +25 -18
+Fixed -1 false output for big account %d => %s in printf.
+Wrote and use getpwuid_any_os. getpwuid breaks on Windows.
+----------------------------
+revision 1.690
+date: 2016/05/14 21:21:56;  author: gilles;  state: Exp;  lines: +33 -23
+*** empty log message ***
+----------------------------
+revision 1.689
+date: 2016/05/09 17:58:11;  author: gilles;  state: Exp;  lines: +155 -20
+Started to be CGI compatible.
+Started  package Imapsync::Getopt::Long.
+----------------------------
+revision 1.688
+date: 2016/03/27 22:56:47;  author: gilles;  state: Exp;  lines: +11 -11
+Check return code of message_to_file in sub message_for_host2.
+----------------------------
+revision 1.687
+date: 2016/03/24 20:39:33;  author: gilles;  state: Exp;  lines: +10 -10
+Replaced message_string() call by message_to_file() and won 1x again.
+Now imapsync crunches only 2x biggest message size in memory.
+----------------------------
+revision 1.686
+date: 2016/03/24 20:21:57;  author: gilles;  state: Exp;  lines: +27 -27
+Changed append_message_on_host2() to pass message string by reference.
+Memory usage passed from 5x to 3x. 3x remains from underlying Mail::IMAPClient module in Mail::IMAPClient::message_string()
+----------------------------
+revision 1.685
+date: 2016/03/24 17:02:13;  author: gilles;  state: Exp;  lines: +65 -35
+Added memory debug in order to decrease the 5x message size in memory.
+----------------------------
+revision 1.684
+date: 2016/03/17 08:35:03;  author: gilles;  state: Exp;  lines: +24 -16
+Bugfix. No more warning about  "Use of uninitialized value $sockargs[7] in join or string at"
+in ssl or tls mode.  Was due to "'SSL_version' => undef".
+----------------------------
+revision 1.683
+date: 2016/03/07 02:41:11;  author: gilles;  state: Exp;  lines: +22 -10
+Added --sslargs1 in documentation.
+----------------------------
+revision 1.682
+date: 2016/03/01 00:47:54;  author: gilles;  state: Exp;  lines: +16 -11
+*** empty log message ***
+----------------------------
+revision 1.681
+date: 2016/02/04 03:34:49;  author: gilles;  state: Exp;  lines: +12 -13
+Bugfix. Syntax error!
+----------------------------
+revision 1.680
+date: 2016/02/04 02:11:32;  author: gilles;  state: Exp;  lines: +25 -27
+Bugfix. Added --expungeaftereach in sub delete_message_on_host1().
+Usability. Added "use --noexpungeaftereach to speed up" if --delete is used.
+----------------------------
+revision 1.679
+date: 2016/01/25 01:57:54;  author: gilles;  state: Exp;  lines: +11 -11
+Bugfix. "Can't use an undefined value as a HASH reference at /usr/bin/imapsync line 1247."
+----------------------------
+revision 1.678
+date: 2016/01/21 19:47:02;  author: gilles;  state: Exp;  lines: +14 -21
+README part check.
+----------------------------
+revision 1.677
+date: 2016/01/19 14:55:06;  author: gilles;  state: Exp;  lines: +295 -289
+help message easier to copy in README part.
+----------------------------
+revision 1.676
+date: 2016/01/16 05:30:00;  author: gilles;  state: Exp;  lines: +282 -77
+Changed basic option list by --help output.
+----------------------------
+revision 1.675
+date: 2016/01/06 01:10:05;  author: gilles;  state: Exp;  lines: +11 -9
+Added --errorsmax in --help message.
+----------------------------
+revision 1.674
+date: 2015/12/28 18:31:06;  author: gilles;  state: Exp;  lines: +17 -10
+Added --debugssl int. Default is like --debugssl 1 (Only print out errors).
+----------------------------
+revision 1.673
+date: 2015/12/26 02:00:05;  author: gilles;  state: Exp;  lines: +141 -145
+Added --timeout1
+Added --timeout2 (--timeout still available to set both with the same value)
+Added --sslargs1 to pass any ssl parameter for host1 connection.
+Added --sslargs2 to pass any ssl parameter for host2 connection.
+Example --sslargs1 SSL_verify_mode=1 --sslargs1 SSL_version=SSLv3
+Removed --allow3xx option.
+----------------------------
+revision 1.672
+date: 2015/12/10 10:23:49;  author: gilles;  state: Exp;  lines: +9 -8
+Added require Encode::Byte to solve "The locale codeset (cp1252) isn't one that perl can decode" on Win32.
+----------------------------
+revision 1.671
+date: 2015/12/09 03:22:46;  author: gilles;  state: Exp;  lines: +48 -47
+Added env_proxy call in sub xoauth2() to read proxy settings from environment variable without  PERL_LWP_ENV_PROXY=1
+----------------------------
+revision 1.670
+date: 2015/12/03 02:36:41;  author: gilles;  state: Exp;  lines: +11 -12
+Bugfix. logfile missed user2.
+----------------------------
+revision 1.669
+date: 2015/12/03 02:03:53;  author: gilles;  state: Exp;  lines: +138 -83
+--logdir --logfile now compatible with old --logfile alone. tests cases.
+----------------------------
+revision 1.668
+date: 2015/12/02 13:23:22;  author: gilles;  state: Exp;  lines: +94 -86
+Fixed some perlcritics.
+----------------------------
+revision 1.667
+date: 2015/11/30 02:44:12;  author: gilles;  state: Exp;  lines: +156 -60
+--automap implemented.
+Added --justautomap to see what will happen with --automap and --f1f2 options.
+----------------------------
+revision 1.666
+date: 2015/11/23 14:56:56;  author: gilles;  state: Exp;  lines: +50 -19
+Doc fix. --logfile path inline and in usage().
+Added require JSON::WebToken::Crypt::RSA and Crypt::OpenSSL::RSA to a good build on Win32.
+Tested OAUTH2 on windows. Works.
+Bug fix. Changed "Host1: checking all wanted folders exist" not efficient algorythm
+  to allow a 2.4 million folders account. Yes, some people have this...
+----------------------------
+revision 1.665
+date: 2015/11/06 00:45:35;  author: gilles;  state: Exp;  lines: +29 -9
+Made quota wrnings, quota human usable.
+----------------------------
+revision 1.664
+date: 2015/11/04 18:09:22;  author: gilles;  state: Exp;  lines: +362 -323
+Back to require IO::Socket::SSL;
+instead of use.
+
+Reformated the usage output.
+Added --f1f2    str1=str2 : Force folder str1 to be synced to str2.
+--f1f2 overrides any automap mapping and any regextrans2
+----------------------------
+revision 1.663
+date: 2015/10/03 23:59:27;  author: gilles;  state: Exp;  lines: +12 -9
+Bugfix. Return with previous Debug when no quota available.
+----------------------------
+revision 1.662
+date: 2015/10/03 22:14:37;  author: gilles;  state: Exp;  lines: +84 -24
+Added quota_extract_storage_limit_in_bytes()
+Added quota_extract_storage_current_in_bytes()
+----------------------------
+revision 1.661
+date: 2015/09/28 15:36:41;  author: gilles;  state: Exp;  lines: +18 -19
+Better prints.
+----------------------------
+revision 1.660
+date: 2015/09/28 14:18:10;  author: gilles;  state: Exp;  lines: +21 -15
+IMAP output as an early stage of quota and ID.
+----------------------------
+revision 1.659
+date: 2015/09/21 22:47:50;  author: gilles;  state: Exp;  lines: +107 -29
+Better ID format sent. Order terms like in thr RFC.
+Added imapsync_id_github, in case.
+----------------------------
+revision 1.658
+date: 2015/09/19 08:56:07;  author: gilles;  state: Exp;  lines: +8 -8
+RCS date in id.
+----------------------------
+revision 1.657
+date: 2015/09/19 08:26:04;  author: gilles;  state: Exp;  lines: +206 -77
+Started to use global $sync-> in order to reduce number of parameters in routines.
+----------------------------
+revision 1.656
+date: 2015/09/13 16:11:07;  author: gilles;  state: Exp;  lines: +46 -24
+Some perlcritic fixes.
+----------------------------
+revision 1.655
+date: 2015/09/11 01:57:51;  author: gilles;  state: Exp;  lines: +15 -12
+Bugfix testing automap.
+----------------------------
+revision 1.654
+date: 2015/09/11 01:23:42;  author: gilles;  state: Exp;  lines: +121 -76
+Added --automap to implement rfc6154. Turned on by default.
+Use --noautomap to avoid it.
+----------------------------
+revision 1.653
+date: 2015/09/05 21:35:56;  author: gilles;  state: Exp;  lines: +27 -25
+IO::Socket::SSL mandatory to run.
+SSL_VERIFY_NONE in --ssl and --tls
+----------------------------
+revision 1.652
+date: 2015/08/28 14:59:59;  author: gilles;  state: Exp;  lines: +8 -8
+"Initial difference" -> "Start difference"
+----------------------------
+revision 1.651
+date: 2015/08/18 22:35:05;  author: gilles;  state: Exp;  lines: +8 -8
+fixed xoauth2 calls.
+----------------------------
+revision 1.650
+date: 2015/08/16 00:42:58;  author: gilles;  state: Exp;  lines: +28 -28
+Changed some output, added Host1: or Host2 at the begining of line.
+----------------------------
+revision 1.649
+date: 2015/08/10 03:10:15;  author: gilles;  state: Exp;  lines: +7 -7
+576 tests.
+----------------------------
+revision 1.648
+date: 2015/08/10 02:58:21;  author: gilles;  state: Exp;  lines: +99 -39
+Added guess_prefix() and guess_separator()
+Guess prefixes and separators instead of forcing the user to find them.
+----------------------------
+revision 1.647
+date: 2015/08/07 04:35:15;  author: gilles;  state: Exp;  lines: +33 -20
+Added folders counting outputs.
+----------------------------
+revision 1.646
+date: 2015/08/07 00:07:39;  author: gilles;  state: Exp;  lines: +16 -6
+Added sub imap_utf7_encode( ). Not used.
+----------------------------
+revision 1.645
+date: 2015/07/31 14:48:11;  author: gilles;  state: Exp;  lines: +11 -11
+Better outpout in login_imap()
+----------------------------
+revision 1.644
 date: 2015/07/17 01:22:52;  author: gilles;  state: Exp;  lines: +9 -7
 Added NOOP in --dry mode during fake APPEND.
 ----------------------------

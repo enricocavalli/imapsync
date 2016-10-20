@@ -1,16 +1,55 @@
 
-REM $Id: build_exe.bat,v 1.28 2015/05/11 01:09:57 gilles Exp gilles $
-@ECHO OFF
+REM $Id: build_exe.bat,v 1.40 2016/08/19 14:12:29 gilles Exp gilles $
+
+@SETLOCAL
+ECHO Currently running through %0 %*
 
 ECHO Building imapsync.exe
 
-@REM Allow to be called from anywhere; 
-@REM the following command cd to dirname of the current batch pathname
-cd /D %~dp0
+@REM the following command change current directory to the dirname of the current batch pathname
+CD /D %~dp0
 
-CALL .\install_modules.bat
+REM Remove the error file because its existence means an error occured during this script execution
+IF EXIST LOG_bat\%~nx0.txt DEL LOG_bat\%~nx0.txt
 
+
+CALL :handle_error CALL :detect_perl
+CALL :handle_error CALL :check_modules
+CALL :handle_error CALL :pp_exe
+
+
+@ENDLOCAL
+EXIT /B
+
+
+:pp_exe
+@SETLOCAL
+CALL pp -o imapsync.exe  --link libeay32_.dll  --link zlib1_.dll --link ssleay32_.dll .\imapsync
+IF ERRORLEVEL 1 CALL pp -o imapsync.exe    .\imapsync
+@ENDLOCAL
+EXIT /B
+
+
+
+
+::------------------------------------------------------
+::--------------- Detect Perl --------------------------
+:detect_perl
+@SETLOCAL
+perl -v
+@ENDLOCAL
+EXIT /B
+::------------------------------------------------------
+
+
+::------------------------------------------------------
+::--------------- Check  modules are here --------------
+:check_modules
+@SETLOCAL
 perl ^
+     -mTest::MockObject ^
+     -mPAR::Packer ^
+     -mReadonly ^
      -mAuthen::NTLM ^
      -mData::Dumper ^
      -mData::Uniqid ^
@@ -33,37 +72,32 @@ perl ^
      -mLWP::UserAgent ^
      -mHTML::Entities ^
      -mJSON ^
+     -mCrypt::OpenSSL::RSA ^
+     -mEncode::Byte ^
      -e ''
+IF ERRORLEVEL 1 CALL .\install_modules.bat
+@ENDLOCAL
+EXIT /B
+::------------------------------------------------------
 
-cd
-@ECHO ON
-@REM --link libssl32_.dll 
-pp -o imapsync.exe  ^
-      --link libeay32_.dll ^
-      --link zlib1_.dll ^
-      --link ssleay32_.dll ^
-      -M Mail::IMAPClient ^
-      -M IO::Socket ^
-      -M IO::Socket::IP ^
-      -M IO::Socket::SSL ^
-      -M IO::Socket::INET ^
-      -M Digest::MD5 ^
-      -M Digest::HMAC_MD5 ^
-      -M Digest::HMAC_SHA1 ^
-      -M Term::ReadKey ^
-      -M File::Spec ^
-      -M Authen::NTLM ^
-      -M Time::Local ^
-      -M URI::Escape ^
-      -M Data::Uniqid ^
-      -M File::Copy::Recursive ^
-      -M IO::Tee ^
-      -M Unicode::String ^
-      -M JSON::WebToken ^
-      -M LWP::UserAgent ^
-      -M HTML::Entities ^
-      -M JSON ^
-      .\imapsync
 
-echo Done building imapsync.exe 
 
+
+::------------------------------------------------------
+::--------------- Handle error -------------------------
+:handle_error
+SETLOCAL
+ECHO IN %0 with parameters %*
+%*
+SET CMD_RETURN=%ERRORLEVEL%
+
+IF %CMD_RETURN% EQU 0 (
+        ECHO GOOD END
+) ELSE (
+        ECHO BAD END
+        IF NOT EXIST LOG_bat MKDIR LOG_bat
+        ECHO Failure calling: %* >> LOG_bat\%~nx0.txt
+)
+ENDLOCAL
+EXIT /B
+::------------------------------------------------------

@@ -1,36 +1,58 @@
 #!/bin/sh
 
-# $Id: prerequisites_imapsync,v 1.16 2016/08/16 16:25:01 gilles Exp gilles $
+# $Id: prerequisites_imapsync,v 1.25 2018/04/24 00:14:23 gilles Exp gilles $
 
 MODULES_MANDATORY='
+App::cpanminus
 Authen::NTLM
+CGI
 Compress::Zlib
+Crypt::OpenSSL::RSA
 Data::Dumper
 Data::Uniqid
-Digest::HMAC_MD5
 Digest::HMAC
+Digest::HMAC_MD5
 Digest::MD5
+Dist::CheckConflicts
+Encode::Byte
 File::Copy::Recursive
 IO::Socket::INET
 IO::Socket::INET6
 IO::Socket::SSL
 IO::Tee
+JSON
 JSON::WebToken
+JSON::WebToken::Crypt::RSA
+HTML::Entities
+LWP::UserAgent
 Mail::IMAPClient
+Module::Implementation
+Module::Runtime
+Module::ScanDeps
+Net::SSLeay
+Package::Stash
+Package::Stash::XS
+PAR::Packer
 Parse::RecDescent
+Pod::Usage
 Readonly
+Regexp::Common
+Sys::MemInfo
 Term::ReadKey
+Test::Fatal
+Test::Mock::Guard
 Test::MockObject
 Test::More
 Test::Pod
+Test::Requires
+Test::NoWarnings
+Test::Deep
+Test::Warn
+Try::Tiny
 Unicode::String
 URI::Escape
 '
 
-MODULES_DEVEL='
-Module::ScanDeps
-PAR::Packer
-'
 
 test_perl() {
 # First we need perl
@@ -44,6 +66,21 @@ test_perl() {
 		return 1
 	fi
 }
+
+test_make() {
+# Second we need make to build some Perl modules
+
+	if make -v > /dev/null 2>&1 ; then
+		make_version=`make -v |head -1`
+		echo Ok: Found make $make_version
+		return 0
+	else
+		echo Failure: make is not here. You have to install the make command.
+		return 1
+	fi
+}
+
+
 
 
 test_module() {
@@ -102,7 +139,7 @@ search_modules_yum() {
 	for M in "$@" ; do
 		echo "==== Searching rpm package name for $M"
 		F=`echo $M|tr -s ":" "/"`.pm
-		#echo yum -q whatprovides "*/$F"
+		echo yum -q whatprovides "*/$F"
 		echo
 		yum -q whatprovides "*/$F"
 		echo
@@ -147,10 +184,13 @@ test_unix() {
 test_unix
 #exit
 test_perl || exit
+test_make || exit
 test_mandatory_modules
 list_to_install
 EXIT=$?
 
 # Help the user to install missing modules
 search_modules_any $LIST_TO_INSTALL
+
+test "$1" = "MODULES_MANDATORY" && search_modules_any $MODULES_MANDATORY
 exit $EXIT

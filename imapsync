@@ -1666,7 +1666,7 @@ All foldernames are presented between brackets like [X] where X is the foldernam
 When a foldername contains non-ASCII characters it is presented in the form
 [X] = [Y] where
 X is the imap foldername you have to use in command line options and
-Y is the uft8 output just printed for convenience, to recognize it.
+Y is the utf8 output just printed for convenience, to recognize it.
 
 END_LISTING
 
@@ -2689,7 +2689,7 @@ sub foldersizes_on_h1h2 {
 
 Folders sizes before the synchronization.
 You can remove foldersizes listings by using "--nofoldersizes" and  "--nofoldersizesatend"
-but then you will also loose the ETA (Estimation Time of Arrival) given after each message copy.
+but then you will also lose the ETA (Estimation Time of Arrival) given after each message copy.
 END_SIZE
 
         ( $h1_nb_msg_start, $h1_bytes_start ) = foldersizes( 'Host1', $imap1, $search1, $sync->{abletosearch1}, @h1_folders_wanted        ) ;
@@ -11180,7 +11180,7 @@ sub gmail12  {
 	$mysync->{maxbytespersecond} ||= 20_000 ; # should be 10_000 computed from by Gmail documentation
 	$mysync->{maxbytesafter} ||= 1_000_000_000 ;
 	$mysync->{automap} = ( defined $mysync->{automap} ) ? $mysync->{automap} : 1 ;
-	$mysync->{maxsleep} = $MAX_SLEEP ;
+	$mysync->{maxsleep} = ( defined $mysync->{maxsleep} ) ? $mysync->{maxsleep} : $MAX_SLEEP ;
 	
 	push @exclude, '\[Gmail\]$' ;
 	return ;
@@ -11195,7 +11195,7 @@ sub gmail1  {
 	$mysync->{maxbytesafter} ||= 2_500_000_000 ;
 	$mysync->{automap} = ( defined $mysync->{automap} ) ? $mysync->{automap} : 1 ;
 	$skipcrossduplicates = ( defined $skipcrossduplicates ) ? $skipcrossduplicates : 1 ;
-	$mysync->{maxsleep} = $MAX_SLEEP ;
+	$mysync->{maxsleep} = ( defined $mysync->{maxsleep} ) ? $mysync->{maxsleep} : $MAX_SLEEP ;
 	
 	push @useheader, 'X-Gmail-Received', 'Message-Id' ;
 	push @regextrans2, 's,\[Gmail\].,,' ;
@@ -11215,7 +11215,7 @@ sub gmail2  {
 	$skipcrossduplicates = ( defined $skipcrossduplicates ) ? $skipcrossduplicates : 1 ;
 	$expunge1            = ( defined $expunge1 )  ? $expunge1  : 1 ;
 	$mysync->{addheader} = ( defined $mysync->{addheader} ) ? $mysync->{addheader} : 1 ;
-	$mysync->{maxsleep} = $MAX_SLEEP ;
+	$mysync->{maxsleep} = ( defined $mysync->{maxsleep} ) ? $mysync->{maxsleep} : $MAX_SLEEP ;
 	
 	push @exclude, '\[Gmail\]$' ;
 	push @useheader, 'X-Gmail-Received', 'Message-Id' ;
